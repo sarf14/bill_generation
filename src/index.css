@@ -434,19 +434,17 @@ button {
   text-align: center;
 }
 
-/* Mobile Adjustments for non-preview UI */
+/* Mobile Adjustments */
 @media (max-width: 768px) {
-  .preview-wrapper {
-    /* Scale down preview visually on small screens but keep proportions */
-    transform: scale(0.45);
-    transform-origin: top center;
-    margin-bottom: -150%; /* Compensate for scaled height */
+  .item-numbers {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
 }
 
 @media (max-width: 480px) {
   .preview-wrapper {
-    transform: scale(0.35);
-    margin-bottom: -180%;
+    /* Instead of scaling down and breaking fonts, we allow horizontal scrolling on small screens */
+    margin-bottom: 0;
   }
 }
