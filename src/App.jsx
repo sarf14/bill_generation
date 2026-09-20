@@ -40,20 +40,22 @@ function App() {
     try {
       const clone = element.cloneNode(true);
       
-      // Allow dynamic height but lock width to A4 desktop size
       // Use absolute instead of fixed to prevent viewport height clipping on mobile
       Object.assign(clone.style, {
         position: 'absolute', 
         top: '0',
         left: '-9999px',
-        width: '794px', 
+        width: '210mm', 
         height: 'max-content',
         transform: 'none',
         margin: '0',
-        padding: '40px', 
-        backgroundColor: 'white',
-        boxSizing: 'border-box'
+        boxShadow: 'none', // Remove the shadow for a clean PDF
+        backgroundColor: 'white'
       });
+      
+      // Also apply this to any children if text-size-adjust is messing them up
+      clone.style.webkitTextSizeAdjust = '100%';
+      clone.style.textSizeAdjust = '100%';
       
       document.body.appendChild(clone);
       

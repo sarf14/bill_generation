@@ -14,8 +14,8 @@ const BillPreview = forwardRef(({ billData }, ref) => {
   const totalInWords = numberToWords(total);
 
   return (
-    <div className="preview-wrapper">
-      <div className="bill-preview-container" ref={ref}>
+    <div className="preview-wrapper" ref={ref}>
+      <div className="bill-preview-container">
         {/* Header */}
         <div className="bill-header">
           <div className="mobile-no">Mobile : {billData.mobile}</div>
