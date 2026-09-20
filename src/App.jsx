@@ -38,39 +38,62 @@ function App() {
     if (!element) return;
 
     try {
-      // Create a clone of the element to avoid mobile CSS transform issues
       const clone = element.cloneNode(true);
       
-      // Force the clone to be exactly A4 size and render off-screen
+      // Allow dynamic height but lock width to A4 desktop size
+      // Use absolute instead of fixed to prevent viewport height clipping on mobile
       Object.assign(clone.style, {
-        position: 'absolute',
-        top: '-9999px',
+        position: 'absolute', 
+        top: '0',
         left: '-9999px',
-        width: '210mm',
+        width: '794px', 
+        height: 'max-content',
         transform: 'none',
         margin: '0',
-        padding: '20mm', // standard A4 padding
-        backgroundColor: 'white'
+        padding: '40px', 
+        backgroundColor: 'white',
+        boxSizing: 'border-box'
       });
       
       document.body.appendChild(clone);
+      
+      // Small delay to ensure the browser has fully calculated the clone's height
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       const canvas = await html2canvas(clone, {
-        scale: 2, // High resolution
+        scale: 2, 
         useCORS: true,
         logging: false,
-        width: clone.offsetWidth,
-        height: clone.offsetHeight
+        width: 794,
+        height: clone.scrollHeight, // Force canvas height to the full content height
+        windowWidth: 794, 
+        windowHeight: clone.scrollHeight // Trick html2canvas into thinking the screen is infinitely tall
       });
       
       document.body.removeChild(clone);
 
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
+      
+      const pdfWidth = 210;
+      const pageHeight = 297;
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      let heightLeft = pdfHeight;
+      let position = 0;
+
+      // Add first page
+      pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+      heightLeft -= pageHeight;
+
+      // Add subsequent pages if the bill is very long
+      while (heightLeft > 0) {
+        position -= pageHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+        heightLeft -= pageHeight;
+      }
+      
       pdf.save(`Bill_${billData.to.split('\n')[0]}_${billData.date}.pdf`);
     } catch (error) {
       console.error("Error generating PDF", error);
