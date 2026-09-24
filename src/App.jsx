@@ -37,16 +37,24 @@ function App() {
     const wrapper = printRef.current;
     if (!wrapper) return;
 
-    // We target the inner container so html2pdf can apply native margins automatically
     const element = wrapper.querySelector('.bill-preview-container') || wrapper;
 
+    const pxWidth = element.offsetWidth;
+    const pxHeight = element.offsetHeight;
+    
+    // Calculate the required PDF height in mm to fit everything on one page.
+    // A4 width is 210mm. Margin is 20mm on each side (40mm total).
+    // So content width in PDF is 170mm.
+    const pdfHeight = (pxHeight * 170 / pxWidth) + 40;
+
     const opt = {
-      margin:       20, // 20mm standard A4 margin on all sides
+      margin:       20, // 20mm standard margin
       filename:     `Bill_${billData.to.split('\n')[0]}_${billData.date}.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
       html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak:    { mode: 'css', before: '.page-break' } // Native automatic pagination
+      // Set width to 210mm (A4 width) and height dynamically to fit all content on exactly 1 page
+      jsPDF:        { unit: 'mm', format: [210, Math.max(297, pdfHeight)], orientation: 'portrait' },
+      pagebreak:    { mode: 'css', before: '.page-break' } 
     };
 
     html2pdf().set(opt).from(element).save().then(() => {
