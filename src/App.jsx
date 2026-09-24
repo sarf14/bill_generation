@@ -3,7 +3,8 @@ import BillForm from './components/BillForm';
 import BillPreview from './components/BillPreview';
 import './index.css';
 
-import html2pdf from 'html2pdf.js';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
 function App() {
   const [activeTab, setActiveTab] = useState('edit');
@@ -32,42 +33,56 @@ function App() {
     ifscCode: 'KKBK0KMCB02'
   });
 
-  const handleDownloadPdf = () => {
+  const handleDownloadPdf = async () => {
     setIsGenerating(true);
     const wrapper = printRef.current;
     if (!wrapper) return;
 
-    // Target the inner container (which doesn't have the 20mm wrapper padding)
+    // Target the inner container
     const element = wrapper.querySelector('.bill-preview-container') || wrapper;
 
-    // Get the exact pixel dimensions of the content
-    const pxWidth = element.offsetWidth;
-    const pxHeight = element.offsetHeight;
+    try {
+      // 1. Take a high-quality picture of the HTML exactly as it looks
+      const canvas = await html2canvas(element, { scale: 2, useCORS: true, letterRendering: true });
+      const imgData = canvas.toDataURL('image/jpeg', 1.0);
 
-    // A4 width is 210mm. Margin is 20mm on each side.
-    // So the printable width inside the PDF is 210 - 40 = 170mm.
-    // We calculate the proportional height in mm.
-    const pdfContentHeightInMm = (pxHeight * 170) / pxWidth;
-    
-    // The total height of the PDF page needs to include the top and bottom margins (20mm + 20mm = 40mm).
-    const totalPdfHeight = pdfContentHeightInMm + 40;
+      // 2. Create a fresh, strict A4 PDF
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();   // 210mm
+      const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
 
-    const opt = {
-      margin:       20, // 20mm standard margin
-      filename:     `Bill_${billData.to.split('\n')[0]}_${billData.date}.pdf`,
-      image:        { type: 'jpeg', quality: 1 },
-      html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-      // Keep standard A4 width (210mm), but stretch the height dynamically so it NEVER breaks onto page 2
-      jsPDF:        { unit: 'mm', format: [210, Math.max(297, totalPdfHeight)], orientation: 'portrait' }
-    };
+      // 3. Define our standard margins
+      const margin = 20; // 20mm
+      const maxImgWidth = pdfWidth - (margin * 2);
+      const maxImgHeight = pdfHeight - (margin * 2);
 
-    html2pdf().set(opt).from(element).save().then(() => {
-      setIsGenerating(false);
-    }).catch(error => {
+      // 4. Calculate how to fit the image perfectly while maintaining aspect ratio
+      const imgProps = pdf.getImageProperties(imgData);
+      const ratio = imgProps.width / imgProps.height;
+
+      let finalWidth = maxImgWidth;
+      let finalHeight = finalWidth / ratio;
+
+      // STRESS TEST LOGIC: If the image is incredibly tall (e.g. 50 items)
+      // we shrink the width and height proportionally so it fits EXACTLY on one page height.
+      if (finalHeight > maxImgHeight) {
+        finalHeight = maxImgHeight;
+        finalWidth = finalHeight * ratio;
+      }
+
+      // Center it horizontally if it had to shrink
+      const xOffset = margin + (maxImgWidth - finalWidth) / 2;
+
+      // 5. Add it to the PDF and save
+      pdf.addImage(imgData, 'JPEG', xOffset, margin, finalWidth, finalHeight);
+      pdf.save(`Bill_${billData.to.split('\n')[0]}_${billData.date}.pdf`);
+
+    } catch (error) {
       console.error("Error generating PDF", error);
       alert("Failed to generate PDF. Please try again.");
+    } finally {
       setIsGenerating(false);
-    });
+    }
   };
 
   return (
