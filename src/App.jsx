@@ -37,29 +37,28 @@ function App() {
     const wrapper = printRef.current;
     if (!wrapper) return;
 
+    // Target the inner container (which doesn't have the 20mm wrapper padding)
     const element = wrapper.querySelector('.bill-preview-container') || wrapper;
 
-    // Use the outer wrapper so it includes the white padding naturally
-    const elementWidth = element.offsetWidth;
-    const elementHeight = element.offsetHeight;
-
+    // Get the exact pixel dimensions of the content
     const pxWidth = element.offsetWidth;
     const pxHeight = element.offsetHeight;
+
+    // A4 width is 210mm. Margin is 20mm on each side.
+    // So the printable width inside the PDF is 210 - 40 = 170mm.
+    // We calculate the proportional height in mm.
+    const pdfContentHeightInMm = (pxHeight * 170) / pxWidth;
     
-    // Calculate the required PDF height in mm to fit everything on one page.
-    // A4 width is 210mm. Margin is 20mm on each side (40mm total).
-    // So content width in PDF is 170mm.
-    const pdfHeight = (pxHeight * 170 / pxWidth) + 40;
+    // The total height of the PDF page needs to include the top and bottom margins (20mm + 20mm = 40mm).
+    const totalPdfHeight = pdfContentHeightInMm + 40;
 
     const opt = {
-      margin:       0, // We set margin to 0 because the wrapper already has CSS padding
+      margin:       20, // 20mm standard margin
       filename:     `Bill_${billData.to.split('\n')[0]}_${billData.date}.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
+      image:        { type: 'jpeg', quality: 1 },
       html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-      // We set the PDF format to exactly match the pixel dimensions of the content.
-      // This mathematically guarantees it will ALWAYS fit perfectly on exactly ONE page.
-      jsPDF:        { unit: 'px', format: [elementWidth, elementHeight], orientation: 'portrait' },
-      pagebreak:    { mode: 'css', before: '.page-break' }
+      // Keep standard A4 width (210mm), but stretch the height dynamically so it NEVER breaks onto page 2
+      jsPDF:        { unit: 'mm', format: [210, Math.max(297, totalPdfHeight)], orientation: 'portrait' }
     };
 
     html2pdf().set(opt).from(element).save().then(() => {
