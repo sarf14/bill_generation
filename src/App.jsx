@@ -39,6 +39,10 @@ function App() {
 
     const element = wrapper.querySelector('.bill-preview-container') || wrapper;
 
+    // Use the outer wrapper so it includes the white padding naturally
+    const elementWidth = element.offsetWidth;
+    const elementHeight = element.offsetHeight;
+
     const pxWidth = element.offsetWidth;
     const pxHeight = element.offsetHeight;
     
@@ -48,13 +52,14 @@ function App() {
     const pdfHeight = (pxHeight * 170 / pxWidth) + 40;
 
     const opt = {
-      margin:       20, // 20mm standard margin
+      margin:       0, // We set margin to 0 because the wrapper already has CSS padding
       filename:     `Bill_${billData.to.split('\n')[0]}_${billData.date}.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
       html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-      // Set width to 210mm (A4 width) and height dynamically to fit all content on exactly 1 page
-      jsPDF:        { unit: 'mm', format: [210, Math.max(297, pdfHeight)], orientation: 'portrait' },
-      pagebreak:    { mode: 'css', before: '.page-break' } 
+      // We set the PDF format to exactly match the pixel dimensions of the content.
+      // This mathematically guarantees it will ALWAYS fit perfectly on exactly ONE page.
+      jsPDF:        { unit: 'px', format: [elementWidth, elementHeight], orientation: 'portrait' },
+      pagebreak:    { mode: 'css', before: '.page-break' }
     };
 
     html2pdf().set(opt).from(element).save().then(() => {

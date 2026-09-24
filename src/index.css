@@ -331,7 +331,7 @@ button {
 
 .bill-title-section {
   text-align: center;
-  margin: 30px 0;
+  margin: 15px 0;
 }
 
 .site-row {
@@ -395,13 +395,13 @@ button {
 .amount-words {
   text-align: center;
   font-size: 18px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .bill-footer {
   display: flex;
   justify-content: space-between;
-  margin-top: 30px;
+  margin-top: 15px;
   font-size: 18px;
 }
 
@@ -430,7 +430,7 @@ button {
 }
 
 .signature-block {
-  margin-top: 40px;
+  margin-top: 20px;
   text-align: center;
 }
 
