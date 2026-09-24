@@ -37,16 +37,21 @@ function App() {
     const wrapper = printRef.current;
     if (!wrapper) return;
 
-    // We target the inner container so html2pdf can apply native margins automatically
-    const element = wrapper.querySelector('.bill-preview-container') || wrapper;
+    // Use the outer wrapper so it includes the white padding naturally
+    const element = wrapper;
+    
+    // Dynamically calculate the exact height and width of the content
+    const elementWidth = element.offsetWidth;
+    const elementHeight = element.offsetHeight;
 
     const opt = {
-      margin:       20, // 20mm standard A4 margin on all sides
+      margin:       0, // We set margin to 0 because the wrapper already has CSS padding
       filename:     `Bill_${billData.to.split('\n')[0]}_${billData.date}.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
       html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak:    { mode: 'css', before: '.page-break' } // Native automatic pagination
+      // We set the PDF format to exactly match the pixel dimensions of the content.
+      // This mathematically guarantees it will ALWAYS fit perfectly on exactly ONE page.
+      jsPDF:        { unit: 'px', format: [elementWidth, elementHeight], orientation: 'portrait' }
     };
 
     html2pdf().set(opt).from(element).save().then(() => {

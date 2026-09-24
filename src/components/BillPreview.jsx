@@ -111,7 +111,7 @@ const BillPreview = forwardRef(({ billData }, ref) => {
             <div>Thanking you,</div>
             <div className="signature-block">
               Yours faithfully,<br />
-              For <span className="bold">{billData.proprietorName}</span>
+              <span className="bold">{billData.proprietorName}</span>
               <br /><br /><br />
               (Proprietor)
             </div>
