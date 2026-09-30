@@ -19,7 +19,9 @@ const BillPreview = forwardRef(({ billData }, ref) => {
         {/* Header */}
         <div className="bill-header">
           <div className="mobile-no">Mobile : {billData.mobile}</div>
-          <h1 className="proprietor-name">{billData.proprietorName}</h1>
+          <h1 className="proprietor-name" style={{ color: billData.themeColor }}>
+            {billData.proprietorName}
+          </h1>
           <div className="address">{billData.address}</div>
         </div>
 

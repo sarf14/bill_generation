@@ -39,6 +39,37 @@ const BillForm = ({ billData, setBillData }) => {
       <h2>Edit Bill Details</h2>
       
       <div className="form-section">
+        <h3>Theme Color</h3>
+        <div className="color-options" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <button 
+            type="button"
+            className={`color-btn ${billData.themeColor === '#FF0000' ? 'active' : ''}`}
+            style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#FF0000', border: billData.themeColor === '#FF0000' ? '3px solid #111' : '1px solid #ccc', cursor: 'pointer' }}
+            onClick={() => setBillData(prev => ({ ...prev, themeColor: '#FF0000' }))}
+            title="Red"
+          />
+          <button 
+            type="button"
+            className={`color-btn ${billData.themeColor === '#008080' ? 'active' : ''}`}
+            style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#008080', border: billData.themeColor === '#008080' ? '3px solid #111' : '1px solid #ccc', cursor: 'pointer' }}
+            onClick={() => setBillData(prev => ({ ...prev, themeColor: '#008080' }))}
+            title="Teal"
+          />
+          <div className="color-picker-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: '1rem' }}>
+            <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>More Colors:</span>
+            <input 
+              type="color" 
+              name="themeColor" 
+              value={billData.themeColor} 
+              onChange={handleChange}
+              style={{ width: '40px', height: '40px', padding: '0', border: 'none', cursor: 'pointer', borderRadius: '4px' }}
+              title="Custom Color"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="form-section">
         <h3>Header Details</h3>
         <label>
           Proprietor Name:

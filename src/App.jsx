@@ -30,7 +30,8 @@ function App() {
     accountHolder: 'Pawaskar Abdul Qadir A G',
     bankName: 'Kokan Mercantile Co-op. Bank Ltd.',
     accountNo: '750101001016450',
-    ifscCode: 'KKBK0KMCB02'
+    ifscCode: 'KKBK0KMCB02',
+    themeColor: '#FF0000'
   });
 
   const handleDownloadPdf = async () => {
