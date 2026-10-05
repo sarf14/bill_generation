@@ -247,10 +247,13 @@ button {
 .preview-wrapper {
   background: white;
   box-shadow: var(--shadow);
-  /* The A4 proportions: width: 210mm, min-height approx 297mm */
+  /* A fixed, true A4 sheet. Fixed height (not min-height) so the PDF
+     always maps 1:1 to a full page with no dead space at the bottom. */
   width: 210mm;
-  min-height: 297mm;
-  padding: 20mm;
+  height: 297mm;
+  /* Small outer white margin between the paper edge and the box outline */
+  padding: 8mm;
+  box-sizing: border-box;
 }
 
 /* =========================================
@@ -265,6 +268,13 @@ button {
   font-size: 16px;
   width: 100%;
   height: 100%;
+  /* THE traditional box outline enclosing the whole bill */
+  border: 2px solid black;
+  padding: 10mm 12mm;
+  box-sizing: border-box;
+  /* Let the content stack top-to-bottom and fill the page height */
+  display: flex;
+  flex-direction: column;
 }
 
 .bill-header {
@@ -400,7 +410,10 @@ button {
 .bill-footer {
   display: flex;
   justify-content: space-between;
-  margin-top: 15px;
+  /* Push the bank/signature block to the bottom of the box so short
+     bills fill the page like a traditional invoice instead of floating */
+  margin-top: auto;
+  padding-top: 20px;
   font-size: 18px;
 }
 

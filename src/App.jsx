@@ -36,46 +36,47 @@ function App() {
 
   const handleDownloadPdf = async () => {
     setIsGenerating(true);
-    const wrapper = printRef.current;
-    if (!wrapper) return;
-
-    // Target the inner container
-    const element = wrapper.querySelector('.bill-preview-container') || wrapper;
+    // Capture the full A4 sheet (it already includes its own margins + box outline)
+    const element = printRef.current;
+    if (!element) {
+      setIsGenerating(false);
+      return;
+    }
 
     try {
-      // 1. Take a high-quality picture of the HTML exactly as it looks
-      const canvas = await html2canvas(element, { scale: 2, useCORS: true, letterRendering: true });
-      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+      // 1. Take a high-quality picture of the whole sheet. PNG keeps the thin
+      //    black borders of the box/table crisp (JPEG blurs them).
+      const canvas = await html2canvas(element, {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+      });
+      const imgData = canvas.toDataURL('image/png');
 
-      // 2. Create a fresh, strict A4 PDF
+      // 2. Create a strict A4 PDF
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();   // 210mm
-      const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
+      const pageWidth = pdf.internal.pageSize.getWidth();   // 210mm
+      const pageHeight = pdf.internal.pageSize.getHeight(); // 297mm
 
-      // 3. Define our standard margins
-      const margin = 20; // 20mm
-      const maxImgWidth = pdfWidth - (margin * 2);
-      const maxImgHeight = pdfHeight - (margin * 2);
-
-      // 4. Calculate how to fit the image perfectly while maintaining aspect ratio
+      // 3. The sheet is already A4-proportioned, so map it to the full page.
+      //    Preserve aspect ratio; if content overflowed (many items) fit to height.
       const imgProps = pdf.getImageProperties(imgData);
       const ratio = imgProps.width / imgProps.height;
 
-      let finalWidth = maxImgWidth;
+      let finalWidth = pageWidth;
       let finalHeight = finalWidth / ratio;
 
-      // STRESS TEST LOGIC: If the image is incredibly tall (e.g. 50 items)
-      // we shrink the width and height proportionally so it fits EXACTLY on one page height.
-      if (finalHeight > maxImgHeight) {
-        finalHeight = maxImgHeight;
+      if (finalHeight > pageHeight) {
+        finalHeight = pageHeight;
         finalWidth = finalHeight * ratio;
       }
 
-      // Center it horizontally if it had to shrink
-      const xOffset = margin + (maxImgWidth - finalWidth) / 2;
+      // Center on the page (handles the overflow fallback gracefully)
+      const xOffset = (pageWidth - finalWidth) / 2;
+      const yOffset = (pageHeight - finalHeight) / 2;
 
-      // 5. Add it to the PDF and save
-      pdf.addImage(imgData, 'JPEG', xOffset, margin, finalWidth, finalHeight);
+      // 4. Add it to the PDF and save
+      pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight);
       pdf.save(`Bill_${billData.to.split('\n')[0]}_${billData.date}.pdf`);
 
     } catch (error) {
