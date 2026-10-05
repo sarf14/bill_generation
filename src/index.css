@@ -247,10 +247,13 @@ button {
 .preview-wrapper {
   background: white;
   box-shadow: var(--shadow);
-  /* A fixed, true A4 sheet. Fixed height (not min-height) so the PDF
-     always maps 1:1 to a full page with no dead space at the bottom. */
+  /* A true A4 sheet that is AT LEAST one page tall but GROWS if the content
+     is taller, so nothing ever gets clipped. The PDF step scales a tall
+     sheet down to fit a single page. */
+  display: flex;
+  flex-direction: column;
   width: 210mm;
-  height: 297mm;
+  min-height: 297mm;
   /* Small outer white margin between the paper edge and the box outline */
   padding: 8mm;
   box-sizing: border-box;
@@ -264,13 +267,14 @@ button {
   font-family: 'Times New Roman', Times, serif;
   color: black;
   background-color: white;
-  line-height: 1.5;
+  line-height: 1.35;
   font-size: 16px;
-  width: 100%;
-  height: 100%;
+  /* Fill at least the full sheet height (so short bills reach the bottom
+     border) but grow with content instead of clipping it */
+  flex: 1 1 auto;
   /* THE traditional box outline enclosing the whole bill */
   border: 2px solid black;
-  padding: 10mm 12mm;
+  padding: 8mm 12mm;
   box-sizing: border-box;
   /* Let the content stack top-to-bottom and fill the page height */
   display: flex;
@@ -293,7 +297,7 @@ button {
   font-size: 38px;
   font-weight: bold;
   text-transform: uppercase;
-  margin: 10px 0;
+  margin: 6px 0;
   letter-spacing: 1px;
 }
 
@@ -304,7 +308,7 @@ button {
 
 .bill-divider {
   border-top: 1px solid black;
-  margin: 20px 0;
+  margin: 12px 0;
   position: relative;
 }
 .bill-divider::after {
@@ -319,19 +323,19 @@ button {
 .bill-meta {
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   position: relative;
 }
 
 .date-row {
   text-align: right;
   font-size: 18px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .to-section {
   font-size: 18px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .client-name {
@@ -340,12 +344,12 @@ button {
 
 .bill-title-section {
   text-align: center;
-  margin: 15px 0;
+  margin: 10px 0;
 }
 
 .site-row {
   font-size: 18px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .bill-title {
@@ -370,7 +374,7 @@ button {
 
 .items-table th, .items-table td {
   border: 1px solid black;
-  padding: 12px;
+  padding: 8px 10px;
   vertical-align: top;
 }
 
@@ -393,7 +397,7 @@ button {
 .total-row td {
   border: 1px solid black;
   font-size: 18px;
-  padding: 12px;
+  padding: 8px 10px;
 }
 
 .text-right {
@@ -404,7 +408,7 @@ button {
 .amount-words {
   text-align: center;
   font-size: 18px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .bill-footer {
@@ -413,7 +417,7 @@ button {
   /* Push the bank/signature block to the bottom of the box so short
      bills fill the page like a traditional invoice instead of floating */
   margin-top: auto;
-  padding-top: 20px;
+  padding-top: 14px;
   font-size: 18px;
 }
 
