@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Generated test artifacts (from scripts/)
+test_bills/
+*_prev_*.png
+_bomb_*.png
+
+# Downloaded bills
+Bill_*.pdf

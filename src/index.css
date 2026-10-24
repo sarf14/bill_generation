@@ -268,6 +268,10 @@ button {
   color: black;
   background-color: white;
   line-height: 1.35;
+  /* THE single knob that scales the whole bill. All template font-sizes and
+     vertical spacing below are in `em`, so lowering this font-size shrinks the
+     bill uniformly (no distortion) while block elements keep the full width.
+     App.jsx auto-fits this value so every bill fits one A4 page at full width. */
   font-size: 16px;
   /* Fill at least the full sheet height (so short bills reach the bottom
      border) but grow with content instead of clipping it */
@@ -288,27 +292,27 @@ button {
 
 .mobile-no {
   text-align: right;
-  font-size: 16px;
+  font-size: 1em;
   font-weight: normal;
-  margin-bottom: 5px;
+  margin-bottom: 0.3125em;
 }
 
 .proprietor-name {
-  font-size: 38px;
+  font-size: 2.375em;
   font-weight: bold;
   text-transform: uppercase;
-  margin: 6px 0;
+  margin: 0.375em 0;
   letter-spacing: 1px;
 }
 
 .address {
-  font-size: 16px;
-  margin-bottom: 10px;
+  font-size: 1em;
+  margin-bottom: 0.625em;
 }
 
 .bill-divider {
   border-top: 1px solid black;
-  margin: 12px 0;
+  margin: 0.75em 0;
   position: relative;
 }
 .bill-divider::after {
@@ -323,19 +327,19 @@ button {
 .bill-meta {
   display: flex;
   flex-direction: column;
-  margin-bottom: 12px;
+  margin-bottom: 0.75em;
   position: relative;
 }
 
 .date-row {
   text-align: right;
-  font-size: 18px;
-  margin-bottom: 8px;
+  font-size: 1.125em;
+  margin-bottom: 0.5em;
 }
 
 .to-section {
-  font-size: 18px;
-  margin-bottom: 12px;
+  font-size: 1.125em;
+  margin-bottom: 0.75em;
 }
 
 .client-name {
@@ -344,16 +348,16 @@ button {
 
 .bill-title-section {
   text-align: center;
-  margin: 10px 0;
+  margin: 0.625em 0;
 }
 
 .site-row {
-  font-size: 18px;
-  margin-bottom: 10px;
+  font-size: 1.125em;
+  margin-bottom: 0.625em;
 }
 
 .bill-title {
-  font-size: 18px;
+  font-size: 1.125em;
   font-weight: bold;
   text-transform: uppercase;
 }
@@ -369,19 +373,19 @@ button {
 .items-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 10px;
+  margin-bottom: 0.625em;
 }
 
 .items-table th, .items-table td {
   border: 1px solid black;
-  padding: 8px 10px;
+  padding: 0.5em 0.625em;
   vertical-align: top;
 }
 
 .items-table th {
   font-weight: bold;
   text-align: center;
-  font-size: 18px;
+  font-size: 1.125em;
 }
 
 .col-sr { width: 8%; text-align: center; }
@@ -391,24 +395,24 @@ button {
 .col-amt { width: 16%; text-align: center; }
 
 .items-table td {
-  font-size: 18px;
+  font-size: 1.125em;
 }
 
 .total-row td {
   border: 1px solid black;
-  font-size: 18px;
-  padding: 8px 10px;
+  font-size: 1.125em;
+  padding: 0.5em 0.625em;
 }
 
 .text-right {
   text-align: right;
-  padding-right: 20px !important;
+  padding-right: 1.25em !important;
 }
 
 .amount-words {
   text-align: center;
-  font-size: 18px;
-  margin-bottom: 12px;
+  font-size: 1.125em;
+  margin-bottom: 0.75em;
 }
 
 .bill-footer {
@@ -417,8 +421,8 @@ button {
   /* Push the bank/signature block to the bottom of the box so short
      bills fill the page like a traditional invoice instead of floating */
   margin-top: auto;
-  padding-top: 14px;
-  font-size: 18px;
+  padding-top: 0.875em;
+  font-size: 1.125em;
 }
 
 .bank-details {
@@ -426,16 +430,16 @@ button {
 }
 
 .bank-details table {
-  margin-top: 10px;
+  margin-top: 0.625em;
   border-collapse: collapse;
 }
 
 .bank-details td {
-  padding: 3px 0;
+  padding: 0.1875em 0;
   vertical-align: top;
 }
 .bank-details td:first-child {
-  width: 180px;
+  width: 11.25em;
   font-weight: bold;
 }
 
@@ -446,7 +450,7 @@ button {
 }
 
 .signature-block {
-  margin-top: 20px;
+  margin-top: 1.25em;
   text-align: center;
 }
 
