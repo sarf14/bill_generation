@@ -20,6 +20,9 @@ function fitBillToPage(wrapper) {
   const container = wrapper.querySelector('.bill-preview-container');
   if (!container) return;
   container.style.fontSize = `${BASE_FONT}px`;
+  // Guard: if the sheet isn't laid out yet (width ~0), don't shrink to tiny.
+  // A 210mm element is always ~794 CSS px, so anything tiny is a bad measure.
+  if (wrapper.offsetWidth < 200) return;
   const targetHeight = wrapper.offsetWidth * A4_RATIO; // what 297mm is at this width
   let font = BASE_FONT;
   for (let i = 0; i < 10; i++) {

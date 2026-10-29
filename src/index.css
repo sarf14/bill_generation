@@ -25,6 +25,11 @@ body {
   background-color: var(--bg-color);
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
+  /* Stop mobile browsers from auto-inflating font sizes, which otherwise
+     makes the bill text measure as "too tall" and shrink to a tiny size
+     on phones (desktop was unaffected). */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 /* App Layout */
@@ -268,6 +273,8 @@ button {
   color: black;
   background-color: white;
   line-height: 1.35;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   /* THE single knob that scales the whole bill. All template font-sizes and
      vertical spacing below are in `em`, so lowering this font-size shrinks the
      bill uniformly (no distortion) while block elements keep the full width.
