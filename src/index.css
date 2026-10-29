@@ -258,6 +258,11 @@ button {
   display: flex;
   flex-direction: column;
   width: 210mm;
+  /* CRITICAL: the parent .pdf-scroll-container is display:flex, which would
+     otherwise shrink this sheet below 210mm on narrow (phone) screens. That
+     squeezed width made the auto-fit shrink the font to tiny on mobile.
+     flex-shrink:0 keeps the sheet a true 210mm and lets the container scroll. */
+  flex-shrink: 0;
   min-height: 297mm;
   /* Small outer white margin between the paper edge and the box outline */
   padding: 8mm;
